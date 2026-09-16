@@ -1,5 +1,4 @@
 # Resultados-Simulacro-Saber-I.-E.-La-Esperanza.-sept
-[index.html.html](https://github.com/user-attachments/files/32310549/index.html.html)
 <!DOCTYPE html>
 <html lang="es">
 <head>
