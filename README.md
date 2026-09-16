@@ -1,5 +1,4 @@
 # Resultados-Simulacro-Saber-I.-E.-La-Esperanza.-sept
-<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
