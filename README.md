@@ -1,4 +1,4 @@
-[index.html.html](https://github.com/user-attachments/files/32310701/index.html.html)
+
 # Resultados-Simulacro-Saber-I.-E.-La-Esperanza.-sept
 <html lang="es">
 <head>
