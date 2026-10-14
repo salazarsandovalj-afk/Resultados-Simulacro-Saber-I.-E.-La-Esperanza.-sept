@@ -1,0 +1,309 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rural Explorers en acción</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: one stage (board, speech bubble, four students) under a row of station tabs, role details beneath. */
+:root{
+  --bg:#EEF3EE; --surface:#FFFFFF; --fg:#17261E; --muted:#51635A; --line:#C9D7CD;
+  --accent:#17795A; --accent-fg:#FFFFFF; --sun:#E3A72F;
+  --board:#1E3A2E; --board-fg:#F1F6F0;
+  --c1:#4C8DC7; --c2:#D9923B; --c3:#6F9C4F; --c4:#B3639E;
+  --font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101A15; --surface:#18251E; --fg:#E8F0EA; --muted:#9DB0A4; --line:#2B3C33;
+    --accent:#4DC39B; --accent-fg:#08150F; --sun:#EDB84A;
+    --board:#0B120E; --board-fg:#F1F6F0;
+    --c1:#6AA6DD; --c2:#E5A55A; --c3:#8DB86D; --c4:#CC84B8; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101A15; --surface:#18251E; --fg:#E8F0EA; --muted:#9DB0A4; --line:#2B3C33;
+  --accent:#4DC39B; --accent-fg:#08150F; --sun:#EDB84A;
+  --board:#0B120E; --board-fg:#F1F6F0;
+  --c1:#6AA6DD; --c2:#E5A55A; --c3:#8DB86D; --c4:#CC84B8; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body); font-size:16px; line-height:1.5;
+  padding-block:24px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:960px; margin:0 auto; display:flex; flex-direction:column; gap:20px}
+h1{font-family:var(--font-display); font-weight:700; font-size:clamp(1.6rem,4.5vw,2.3rem); line-height:1.1; margin:0; text-wrap:balance}
+.lead{margin:6px 0 0; color:var(--muted); max-width:62ch}
+.tabs{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px}
+.tab{
+  font:inherit; text-align:left; cursor:pointer; background:var(--surface); color:var(--fg);
+  border:1px solid var(--line); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; min-width:0;
+}
+.tab small{color:var(--muted); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase}
+.tab b{font-family:var(--font-display); font-weight:500; font-size:1rem; overflow-wrap:anywhere}
+.tab[aria-selected="true"]{background:var(--accent); color:var(--accent-fg); border-color:var(--accent)}
+.tab[aria-selected="true"] small{color:inherit; opacity:.85}
+:focus-visible{outline:3px solid var(--sun); outline-offset:2px}
+.stage{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px;
+  display:flex; flex-direction:column; gap:14px;
+}
+.board{
+  background:var(--board); color:var(--board-fg); border-radius:8px; padding:12px 16px; min-height:78px;
+  display:flex; flex-direction:column; justify-content:center; gap:2px;
+}
+.board .bt{font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; opacity:.7}
+.board .bx{font-family:var(--font-display); font-size:clamp(1.05rem,3.2vw,1.45rem); font-weight:500; overflow-wrap:anywhere}
+.bubble{
+  --tail:12.5%; position:relative; border:2px solid var(--fg); border-radius:12px; padding:12px 16px; min-height:92px;
+  background:var(--surface);
+}
+.bubble::after{
+  content:""; position:absolute; bottom:-11px; left:var(--tail); width:18px; height:18px; background:var(--surface);
+  border-right:2px solid var(--fg); border-bottom:2px solid var(--fg); transform:translateX(-50%) rotate(45deg);
+  transition:left .35s ease;
+}
+.bubble.notail::after{display:none}
+.who{font-size:.8rem; font-weight:600; color:var(--accent); letter-spacing:.03em}
+.say{margin:2px 0 0; font-family:var(--font-display); font-size:clamp(1.1rem,3.4vw,1.5rem); font-weight:500; line-height:1.25; overflow-wrap:anywhere}
+.cast{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; padding-top:6px}
+.person{display:flex; flex-direction:column; align-items:center; text-align:center; gap:0; opacity:.6; transition:opacity .3s}
+.person.on{opacity:1}
+.person svg{width:min(100%,84px); height:auto; transition:transform .3s}
+.person.on svg{transform:translateY(-6px) scale(1.07)}
+.person .nm{font-weight:600; font-size:.95rem}
+.person .rl{font-size:.75rem; color:var(--muted)}
+.mouth{transform-origin:32px 32px}
+.person.on .mouth{animation:talk .35s ease-in-out infinite alternate}
+@keyframes talk{from{transform:scaleY(.5)}to{transform:scaleY(1.9)}}
+.caption{
+  border-left:4px solid var(--sun); padding:4px 0 4px 12px; margin:0; min-height:3.2em;
+}
+.controls{display:flex; flex-wrap:wrap; align-items:center; gap:10px}
+.btn{
+  font:inherit; font-weight:600; cursor:pointer; background:var(--surface); color:var(--fg);
+  border:1px solid var(--line); border-radius:8px; padding:8px 14px; min-height:40px;
+}
+.btn.primary{background:var(--accent); color:var(--accent-fg); border-color:var(--accent); min-width:104px}
+.dots{display:flex; gap:6px; flex-wrap:wrap; margin-left:auto; align-items:center}
+.dot{width:14px; height:14px; border-radius:50%; border:2px solid var(--muted); background:transparent; padding:0; cursor:pointer}
+.dot.on{background:var(--accent); border-color:var(--accent)}
+.count{color:var(--muted); font-size:.9rem; font-variant-numeric:tabular-nums}
+.details{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; min-width:0}
+.panel h2{font-family:var(--font-display); font-size:1.1rem; margin:0 0 8px}
+.panel ul{margin:0; padding-left:1.1em; display:flex; flex-direction:column; gap:6px}
+.panel p{margin:0 0 8px}
+.panel p:last-child{margin:0}
+.note{color:var(--muted); font-size:.9rem; margin:0}
+@media (max-width:640px){
+  .tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .details{grid-template-columns:minmax(0,1fr)}
+  .dots{margin-left:0; width:100%}
+}
+@media (prefers-reduced-motion: reduce){
+  .person.on .mouth{animation:none}
+  .person svg,.bubble::after,.person{transition:none}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Rural Explorers en acción</h1>
+    <p class="lead">Una animación de ejemplo para ver qué hace cada estudiante en cada estación y qué dice en inglés. No es un video grabado: son personajes ilustrativos con diálogos modelo.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Estaciones" id="tabs"></nav>
+
+  <section class="stage" aria-label="Simulación de la estación">
+    <div class="board"><span class="bt" id="bt"></span><span class="bx" id="bx"></span></div>
+    <div class="bubble" id="bubble"><div class="who" id="who"></div><p class="say" id="say"></p></div>
+    <div class="cast" id="cast"></div>
+    <p class="caption" id="caption" aria-live="polite"></p>
+    <div class="controls">
+      <button class="btn" id="prev" type="button">Anterior</button>
+      <button class="btn primary" id="play" type="button">Pausar</button>
+      <button class="btn" id="next" type="button">Siguiente</button>
+      <span class="count" id="count"></span>
+      <div class="dots" id="dots" role="group" aria-label="Pasos"></div>
+    </div>
+  </section>
+
+  <section class="details">
+    <div class="panel"><h2>Qué hace cada estudiante</h2><ul id="roles"></ul></div>
+    <div class="panel"><h2>Qué hace usted</h2><p id="teacher"></p><p class="note" id="output"></p></div>
+  </section>
+</div>
+
+<script>
+var PEOPLE = [
+  {n:"Ana", r:"Captain", c:"var(--c1)", skin:"#F0C8A4"},
+  {n:"Luis", r:"Secretary", c:"var(--c2)", skin:"#C98F68"},
+  {n:"Sofía", r:"Speaker", c:"var(--c3)", skin:"#8D5A3C"},
+  {n:"Mateo", r:"Timekeeper", c:"var(--c4)", skin:"#E3B58D"}
+];
+var TEACHER_STEP = {a:-1, w:"Docente", t:"Great job! Here is your stamp.", c:"El docente sella el pasaporte de cada estudiante y suena la señal para rotar de estación.", bt:"English Passport", bx:"Sello de la estación"};
+
+var STATIONS = [
+ { tab:"Estación 1", name:"Farm Market", time:"15 min",
+   steps:[
+    {a:0,t:"Luis and Sofía are sellers. Mateo and I are buyers.",c:"El Captain reparte los papeles: dos vendedores y dos compradores.",bt:"Farm Market",bx:"potatoes · tomatoes · corn · eggs · milk"},
+    {a:1,t:"Good morning! What would you like?",c:"El vendedor saluda y pregunta qué desea el cliente.",bt:"Lista de precios",bx:"potatoes $5.000 kilo · eggs $600 each"},
+    {a:0,t:"I would like two kilos of potatoes, please. How much is it?",c:"El comprador pide el producto y pregunta el precio.",bt:"Lista de precios",bx:"potatoes $5.000 kilo · eggs $600 each"},
+    {a:2,t:"It is ten thousand pesos. Here you are.",c:"El segundo vendedor responde con el precio y entrega el producto.",bt:"Lista de precios",bx:"2 kilos × $5.000 = $10.000"},
+    {a:3,t:"Thank you! Have a nice day!",c:"El otro comprador agradece y se despide. Repiten con otros productos.",bt:"Lista de precios",bx:"potatoes $5.000 kilo · eggs $600 each"},
+    {a:1,t:"Shopping list: two kilos of potatoes.",c:"El Secretary escribe la compra en la lista de mercado.",bt:"Shopping list",bx:"two kilos of potatoes"},
+    {a:3,t:"Five minutes left. Let's switch roles!",c:"El Timekeeper avisa el tiempo y los cuatro cambian de papel: compradores pasan a vender.",bt:"Cambio de roles",bx:"vendedores ⇄ compradores"},
+    TEACHER_STEP
+   ],
+   roles:["Ana (Captain): organiza los papeles y pide el producto.","Luis (Secretary): anota la lista de mercado.","Sofía (Speaker): vende y habla por el equipo.","Mateo (Timekeeper): cuida el tiempo y los materiales."],
+   teacher:"Circule entre los equipos, deje visibles en cartulina las frases modelo (What would you like? / I would like… / How much is it?) y selle los pasaportes al terminar.",
+   output:"Resultado: una lista de mercado y al menos tres intercambios por estudiante." },
+ { tab:"Estación 2", name:"Who Am I?", time:"15 min",
+   steps:[
+    {a:0,t:"Mateo, take a card. Don't show us!",c:"El Captain pide a un compañero que saque una tarjeta de animal sin mostrarla.",bt:"Mystery card",bx:"?"},
+    {a:2,t:"Is it big?",c:"Los demás hacen preguntas cuya respuesta es sí o no (máximo 8).",bt:"Mystery card",bx:"?"},
+    {a:3,t:"Yes, it is.",c:"Quien tiene la tarjeta solo responde Yes, it is / No, it isn't.",bt:"Mystery card",bx:"?"},
+    {a:1,t:"Does it live on the farm?",c:"Otra pregunta, ahora con Does it…?",bt:"Mystery card",bx:"?"},
+    {a:3,t:"Yes, it does.",c:"Respuesta corta con el mismo verbo de la pregunta.",bt:"Mystery card",bx:"?"},
+    {a:0,t:"I think it is a cow!",c:"El equipo se arriesga a decir un animal.",bt:"Mystery card",bx:"?"},
+    {a:3,t:"Correct! It is a cow. Now it is Sofía's turn.",c:"Se revela la tarjeta y rota quien guarda el secreto, hasta que los cuatro lo hayan hecho.",bt:"Mystery card",bx:"COW"},
+    TEACHER_STEP
+   ],
+   roles:["Ana (Captain): propone el turno y dice la respuesta del equipo.","Luis (Secretary): cuenta las preguntas usadas.","Sofía (Speaker): lidera las preguntas.","Mateo (Timekeeper): guarda el secreto de la tarjeta esta ronda."],
+   teacher:"Tenga listas unas 10 tarjetas de animales de granja. Acompañe con frases: Is it big? / Does it have four legs? / Can it fly?",
+   output:"Resultado: cada estudiante es el animal misterioso al menos una vez." },
+ { tab:"Estación 3", name:"Weather Report", time:"15 min",
+   steps:[
+    {a:0,t:"We are Rainbirds Radio. Each of us says one sentence.",c:"El equipo se presenta como un noticiero del clima para campesinos.",bt:"Weather map",bx:"mapa dibujado por el equipo"},
+    {a:2,t:"Good morning, farmers! Today it is sunny and hot.",c:"El Speaker abre el noticiero con el clima de hoy.",bt:"Today",bx:"sunny · hot"},
+    {a:1,t:"Tomorrow it will be rainy in the afternoon.",c:"Segunda frase: el clima de mañana.",bt:"Tomorrow",bx:"rainy in the afternoon"},
+    {a:3,t:"It is a good day to plant corn.",c:"Tercera frase: un consejo para el trabajo del campo.",bt:"Tip",bx:"plant corn"},
+    {a:0,t:"Don't forget your hat! Have a great day!",c:"Cierre del noticiero.",bt:"Rainbirds Radio",bx:"Have a great day!"},
+    {a:1,t:"I wrote our report on the poster.",c:"El Secretary copia las cuatro frases en el cartel que irá a la Expo.",bt:"Poster",bx:"4 frases del reporte"},
+    TEACHER_STEP
+   ],
+   roles:["Ana (Captain): cierra el noticiero.","Luis (Secretary): escribe el reporte en el cartel.","Sofía (Speaker): lee la primera frase como presentadora.","Mateo (Timekeeper): aporta el consejo para el campo."],
+   teacher:"Dé dos o tres ejemplos de clima (sunny, rainy, windy, cloudy) y deje que dibujen símbolos en la cartulina. Corrija repitiendo bien la frase, sin señalar el error.",
+   output:"Resultado: un reporte de cuatro oraciones con su mapa dibujado." },
+ { tab:"Estación 4", name:"Local Recipe", time:"15 min",
+   steps:[
+    {a:0,t:"Our recipe is hot chocolate. Everyone reads one step.",c:"El equipo elige una receta de la región y reparte los pasos.",bt:"Hot chocolate",bx:"water · chocolate · sugar"},
+    {a:1,t:"You need: two cups of water, chocolate and sugar.",c:"El primero lee la lista de ingredientes.",bt:"Ingredients",bx:"2 cups water · chocolate · sugar"},
+    {a:2,t:"First, boil the water.",c:"Cada integrante lee un paso con First, Then, Finally.",bt:"Step 1",bx:"boil the water"},
+    {a:3,t:"Then, add the chocolate and the sugar.",c:"Segundo paso.",bt:"Step 2",bx:"add chocolate and sugar"},
+    {a:0,t:"Finally, serve it hot!",c:"Tercer paso y cierre de la receta.",bt:"Step 3",bx:"serve it hot"},
+    {a:1,t:"We drew the steps on our poster.",c:"El Secretary termina el cartel con la receta ilustrada.",bt:"Poster",bx:"receta ilustrada"},
+    TEACHER_STEP
+   ],
+   roles:["Ana (Captain): lee el paso final.","Luis (Secretary): escribe y pega el cartel.","Sofía (Speaker): lee el primer paso.","Mateo (Timekeeper): lee el segundo paso."],
+   teacher:"Pegue First, Then, Finally en la pared. Si no conocen una palabra, deben preguntar How do you say… in English? y eso se premia.",
+   output:"Resultado: un cartel con ingredientes y tres pasos ilustrados." },
+ { tab:"Cierre", name:"Expo final", time:"25 min",
+   steps:[
+    {a:0,t:"Hello! We are The Rainbirds.",c:"Cada equipo pasa 3 minutos frente al grupo con sus trabajos colgados.",bt:"Expo final",bx:"1 frase por integrante"},
+    {a:1,t:"We sold potatoes in the market.",c:"Cada estudiante dice una frase sobre lo que hizo.",bt:"Expo final",bx:"1 frase por integrante"},
+    {a:2,t:"Our weather report was sunny and hot.",c:"Segunda frase.",bt:"Expo final",bx:"1 frase por integrante"},
+    {a:3,t:"Our recipe was hot chocolate.",c:"Tercera frase. Con esto los 16 estudiantes han hablado.",bt:"Expo final",bx:"1 frase por integrante"},
+    {a:-1,w:"Público",t:"I like your poster because it is colorful.",c:"Los otros equipos dan retroalimentación positiva con I like… o Good job because…",bt:"Aplausos",bx:"I like… / Good job because…"},
+    {a:-1,w:"Docente",t:"Everyone spoke today. Great job, explorers!",c:"Cierre con premiación simbólica: Best Speaker, Best Team Spirit, Most Creative, Brave Learner.",bt:"Certificados",bx:"Brave Learner · Most Creative"}
+   ],
+   roles:["Ana (Captain): saluda y presenta al equipo.","Luis (Secretary): cuenta lo que vendieron o escribieron.","Sofía (Speaker): presenta el reporte del clima.","Mateo (Timekeeper): presenta la receta."],
+   teacher:"Cuelgue los trabajos en la pared y deje que el público participe con una frase positiva. Opcional: cierre con Bingo o Simon says con el vocabulario del día.",
+   output:"Resultado: los 16 estudiantes dicen al menos una frase en inglés." }
+];
+
+var $ = function(id){return document.getElementById(id)};
+var st = 0, step = 0, playing = false, timer = null;
+var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function face(p){
+  return '<svg viewBox="0 0 64 64" aria-hidden="true">' +
+    '<path d="M6 64c0-14 11-22 26-22s26 8 26 22z" fill="'+p.c+'"/>' +
+    '<circle cx="32" cy="27" r="14" fill="'+p.skin+'"/>' +
+    '<path d="M17.5 25a14.5 14 0 0 1 29 0c-7-5-22-5-29 0z" fill="#2A1D16"/>' +
+    '<circle cx="27" cy="28" r="1.8" fill="#1B1B1B"/><circle cx="37" cy="28" r="1.8" fill="#1B1B1B"/>' +
+    '<ellipse class="mouth" cx="32" cy="34" rx="4" ry="1.5" fill="#7A2F2F"/></svg>';
+}
+function buildCast(){
+  var h = "";
+  PEOPLE.forEach(function(p){
+    h += '<div class="person">'+face(p)+'<span class="nm">'+p.n+'</span><span class="rl">'+p.r+'</span></div>';
+  });
+  $("cast").innerHTML = h;
+}
+function buildTabs(){
+  var h = "";
+  STATIONS.forEach(function(s,i){
+    h += '<button class="tab" role="tab" type="button" data-i="'+i+'" aria-selected="'+(i===st)+'"><small>'+s.tab+'</small><b>'+s.name+'</b></button>';
+  });
+  $("tabs").innerHTML = h;
+  Array.prototype.forEach.call($("tabs").children, function(b){
+    b.addEventListener("click", function(){ selectStation(+b.getAttribute("data-i")); });
+  });
+}
+function buildDots(){
+  var n = STATIONS[st].steps.length, h = "";
+  for(var i=0;i<n;i++){ h += '<button class="dot" type="button" data-i="'+i+'" aria-label="Paso '+(i+1)+'"></button>'; }
+  $("dots").innerHTML = h;
+  Array.prototype.forEach.call($("dots").children, function(b){
+    b.addEventListener("click", function(){ go(+b.getAttribute("data-i")); restart(); });
+  });
+}
+function buildDetails(){
+  var s = STATIONS[st], h = "";
+  s.roles.forEach(function(r){ h += "<li>"+r+"</li>"; });
+  $("roles").innerHTML = h;
+  $("teacher").textContent = s.teacher;
+  $("output").textContent = s.output + " Duración: " + s.time + ".";
+}
+function show(){
+  var s = STATIONS[st], d = s.steps[step], n = s.steps.length;
+  Array.prototype.forEach.call($("cast").children, function(el,i){ el.classList.toggle("on", i===d.a); });
+  var b = $("bubble");
+  if(d.a >= 0){
+    b.classList.remove("notail");
+    b.style.setProperty("--tail", (d.a*25+12.5)+"%");
+    $("who").textContent = PEOPLE[d.a].n + " (" + PEOPLE[d.a].r + ")";
+  } else {
+    b.classList.add("notail");
+    $("who").textContent = d.w;
+  }
+  $("say").textContent = d.t;
+  $("caption").textContent = d.c;
+  $("bt").textContent = d.bt;
+  $("bx").textContent = d.bx;
+  $("count").textContent = "Paso " + (step+1) + " de " + n;
+  Array.prototype.forEach.call($("dots").children, function(el,i){ el.classList.toggle("on", i===step); });
+}
+function go(i){
+  var n = STATIONS[st].steps.length;
+  step = (i % n + n) % n;
+  show();
+}
+function tick(){ go(step+1); }
+function restart(){
+  clearTimeout(timer);
+  if(playing){ timer = setTimeout(function(){ tick(); restart(); }, 5200); }
+}
+function setPlaying(v){
+  playing = v;
+  $("play").textContent = v ? "Pausar" : "Reproducir";
+  restart();
+}
+function selectStation(i){
+  st = i; step = 0;
+  Array.prototype.forEach.call($("tabs").children, function(b,k){ b.setAttribute("aria-selected", k===i); });
+  buildDots(); buildDetails(); show(); restart();
+}
+$("prev").addEventListener("click", function(){ go(step-1); restart(); });
+$("next").addEventListener("click", function(){ go(step+1); restart(); });
+$("play").addEventListener("click", function(){ setPlaying(!playing); });
+
+buildCast(); buildTabs(); buildDots(); buildDetails(); show();
+setPlaying(!reduce);
+</script>
+
+</body></html>
